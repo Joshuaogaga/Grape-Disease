@@ -77,7 +77,9 @@ def vit_classifier_page():
             predictions = model.predict(preprocessed_img)
             predicted_class_index = np.argmax(predictions, axis=1)[0]
             predicted_class_name = class_indices[str(predicted_class_index)]
-            return predicted_class_name
+            confidence = round(100 * np.max(predictions[0]), 2)  # Confidence percentage
+            return predicted_class_name,  confidence
+
         except Exception as e:
             return f"Error: {e}"
 
@@ -115,8 +117,8 @@ def vit_classifier_page():
         with col2:
             if st.button('Classify Image'):
                 with st.spinner('Classifying...'):
-                    prediction = predict_image_class(model, uploaded_image, class_indices)
-                    st.success(f'Prediction: **{str(prediction)}**')
+                    prediction,confidence = predict_image_class(model, uploaded_image, class_indices)
+                    st.success(f'Prediction: **{str(prediction)}** with Confidence: **{confidence}%**')
 
     # Multiple Image Upload Section
     st.markdown("### Upload Multiple Images")

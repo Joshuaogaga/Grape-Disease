@@ -50,30 +50,35 @@ def cnn_classifier_page():
 
     # Load the model and class indices
     working_dir = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(working_dir, "cnn_prediction_model_V3")
+    model_path = os.path.join(working_dir, "cnn_prediction_model_V3.keras")
     model = tf.keras.models.load_model(model_path)
     class_indices_path = os.path.join(working_dir, "class_indices.json")
     class_indices = json.load(open(class_indices_path))
 
     # Function to Load and Preprocess the Image
-    def load_and_preprocess_image(image_path, target_size=(256, 256)):
-        img = Image.open(image_path)
+    def load_and_preprocess_image(image, target_size=(256, 256)):
+        img = Image.open(image)
+        # Resize the image
         img = img.resize(target_size)
-        img_array = np.array(img)
-        img_array = np.expand_dims(img_array, axis=0)
-        img_array = img_array.astype('float32') / 255.
+        # Convert the image to an array
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        # Normalize the image and create a batch dimension
+        img_array = np.expand_dims(img_array, axis=0)  # Create batch dimension
+        img_array = img_array.astype('uint8') / 255.0  # Normalize to [0, 1]
         return img_array
 
     # Function to Predict the Class of an Image
-    def predict_image_class(model, image_path, class_indices):
+    def predict_image_class(model, image, class_indices):
         try:
-            preprocessed_img = load_and_preprocess_image(image_path)
+            preprocessed_img = load_and_preprocess_image(image)
             predictions = model.predict(preprocessed_img)
-            predicted_class_index = np.argmax(predictions, axis=1)[0]
+            predicted_class_index = np.argmax(predictions[0])  # Get the index of the max probability
             predicted_class_name = class_indices[str(predicted_class_index)]
-            return predicted_class_name
+            confidence = round(100 * np.max(predictions[0]), 2)  # Confidence percentage
+            return predicted_class_name, confidence
         except Exception as e:
-            return f"Error: {e}"
+            return f"Error: {e}",  0
+
 
     # Function to handle multiple image predictions
     def predict_multiple_images(images):
@@ -109,8 +114,8 @@ def cnn_classifier_page():
         with col2:
             if st.button('Classify Image'):
                 with st.spinner('Classifying...'):
-                    prediction = predict_image_class(model, uploaded_image, class_indices)
-                    st.success(f'Prediction: **{str(prediction)}**')
+                    prediction, confidence = predict_image_class(model, uploaded_image, class_indices)
+                    st.success(f'Prediction: **{str(prediction)}** with Confidence: **{confidence}%**')
 
     # Multiple Image Upload Section
     st.markdown("### Upload Multiple Images")
