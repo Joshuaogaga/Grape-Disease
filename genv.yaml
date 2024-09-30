@@ -18,3 +18,5 @@ dependencies:
   - pytest
   - seaborn
   - tensorflow
+  - streamlit
+  
