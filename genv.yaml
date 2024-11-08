@@ -1,0 +1,22 @@
+# environment.yml
+# conda env create -f genv.yaml
+name: genv
+channels:
+  - defaults
+dependencies:
+  - python=3.10.13
+  - ipykernel
+  - pandas
+  - numpy
+  - matplotlib
+  - scikit-learn
+  - pip
+  - flake8
+  - black
+  - pyspark
+  - pymongo
+  - pytest
+  - seaborn
+  - tensorflow
+  - streamlit
+  
