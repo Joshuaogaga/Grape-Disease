@@ -104,7 +104,7 @@ def vit_classifier_page():
     """)
 
     # Single Image Upload Section
-    st.markdown("### Upload a Single Image")
+    st.markdown("### Upload Image")
     uploaded_image = st.file_uploader("Upload a single image...", type=["jpg", "jpeg", "png"])
 
     if uploaded_image:
@@ -119,58 +119,3 @@ def vit_classifier_page():
                 with st.spinner('Classifying...'):
                     prediction,confidence = predict_image_class(model, uploaded_image, class_indices)
                     st.success(f'Prediction: **{str(prediction)}** with Confidence: **{confidence}%**')
-
-    # Multiple Image Upload Section
-    st.markdown("### Upload Multiple Images")
-    uploaded_images = st.file_uploader("Upload multiple images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
-
-    if uploaded_images:
-        col1, col2 = st.columns(2)
-        with col1:
-            for uploaded_image in uploaded_images:
-                image = Image.open(uploaded_image)
-                st.image(image.resize((150, 150)), caption=f"Uploaded: {uploaded_image.name}")
-        with col2:
-            if st.button('Classify All Images'):
-                with st.spinner('Classifying...'):
-                    results = predict_multiple_images(uploaded_images)
-                    df_results = pd.DataFrame(results)
-                    st.write(df_results)
-
-                    # Option to download the results as CSV
-                    csv = df_results.to_csv(index=False).encode('utf-8')
-                    st.download_button(
-                        label="Download Predictions as CSV",
-                        data=csv,
-                        file_name='image_predictions_vit.csv',
-                        mime='text/csv',
-                    )
-
-    # Batch dataset processing (e.g., a zip file of images)
-    st.markdown("### Upload a Zip of Images for Batch Prediction")
-    uploaded_zip = st.file_uploader("Upload a zip file containing images...", type="zip")
-
-    if uploaded_zip:
-        with zipfile.ZipFile(uploaded_zip, "r") as zip_ref:
-            zip_ref.extractall("temp_images")
-            image_files = os.listdir("temp_images")
-
-            if st.button('Classify Dataset'):
-                predictions = []
-                for image_file in image_files:
-                    image_path = os.path.join("temp_images", image_file)
-                    prediction = predict_image_class(model, image_path, class_indices)
-                    predictions.append({'Image': image_file, 'Prediction': prediction})
-
-                # Create a DataFrame for the results
-                df_predictions = pd.DataFrame(predictions)
-                st.write(df_predictions)
-
-                # Provide a download link for CSV report
-                csv_report = df_predictions.to_csv(index=False).encode('utf-8')
-                st.download_button(
-                    label="Download Dataset Predictions as CSV",
-                    data=csv_report,
-                    file_name='dataset_predictions_vit.csv',
-                    mime='text/csv',
-                )
