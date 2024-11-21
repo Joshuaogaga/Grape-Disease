@@ -11,7 +11,7 @@ import zipfile
 from patch_extractor import PatchExtractor
 
 def vit_classifier_page():
-    st.title('🌿 ViT Potato Disease Classifier')
+    st.title('🌿 ViT Grape Disease Classifier')
 
     # Custom CSS for Background and Fonts
     st.markdown("""
