@@ -88,9 +88,12 @@ def vit_classifier_page():
         predictions = []
         for uploaded_image in images:
             image_name = uploaded_image.name
+            # Assuming `predict_image_class` returns a float or a numeric value, convert it to string
             prediction = predict_image_class(model, uploaded_image, class_indices)
-            predictions.append({'Image': image_name, 'Prediction': prediction})
+            # Ensure that the prediction is converted to a string (or other compatible format)
+            predictions.append({'Image': image_name, 'Prediction': str(prediction)})
         return predictions
+
 
     st.markdown("""
         Welcome to the VIT Grape Disease Classifier! Upload an image of a grape leaf to identify possible diseases.
@@ -119,3 +122,29 @@ def vit_classifier_page():
                 with st.spinner('Classifying...'):
                     prediction,confidence = predict_image_class(model, uploaded_image, class_indices)
                     st.success(f'Prediction: **{str(prediction)}** with Confidence: **{confidence}%**')
+
+    # Multiple Image Upload Section
+    st.markdown("### Upload Multiple Images")
+    uploaded_images = st.file_uploader("Upload multiple images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
+    if uploaded_images:
+        col1, col2 = st.columns(2)
+        with col1:
+            for uploaded_image in uploaded_images:
+                image = Image.open(uploaded_image)
+                st.image(image.resize((300, 300)), caption=f"Uploaded: {uploaded_image.name}")
+        with col2:
+            if st.button('Classify All Images'):
+                with st.spinner('Classifying...'):
+                    results = predict_multiple_images(uploaded_images)
+                    df_results = pd.DataFrame(results)
+                    st.write(df_results)
+
+                    # Option to download the results as CSV
+                    csv = df_results.to_csv(index=False).encode('utf-8')
+                    st.download_button(
+                        label="Download Predictions as CSV",
+                        data=csv,
+                        file_name='image_predictions.csv',
+                        mime='text/csv',
+                    )
