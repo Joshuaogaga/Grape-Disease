@@ -17,38 +17,32 @@ The dataset for this study consists of 9,023 high-resolution images of grape lea
 - **Leaf Blight**
 - **Healthy**
 
-## Technologies Used
-- **Scikit-learn**: For building machine learning models
-- **Joblib**: For saving and loading models
-
 ## How to Access and Run the Project
+Kindly note, the file used to develop and train the models is saved as grape_cnn.ipynb and grape_vit.ipynb for CNN and Vision Transformer respectively. 
 
 ### Prerequisites
 - Python. 
-- Required libraries: `pandas`, `numpy`, `scikit-learn`, `joblib`, `pymongo`, `pyspark`,  `streamlit`
+- Required libraries: `pandas`, `numpy`, `scikit-learn`, `joblib`, `pymongo`, `pyspark`,  `streamlit`, `torch`, `transformers`, `torchvision`, `matplotlib`, `seaborn`
 
 ### Steps to Access the Project
 1. **Clone the Repository**
    ```bash
-git clone https://github.com/Joshuaogaga/Grape-Disease.git
-cd Grape-Disease
+    git clone https://github.com/Joshuaogaga/Grape-Disease.git
+    cd Grape-Disease
    ```
 
-3. **Install Required Libraries**
+2. **Install Required Libraries**
    ```bash
    conda env create -f genv.yaml
    conda activate  genv
    ```
 
-4. **Run the Project**
-    - We were able to train our data using different model.
-
-    - For convenience sake, our project was deployed using streamlit where you can easily switch models  and see the results. You can run the project by running the following command in the terminal:
+3. **Run the Project**
+    - For convenience sake, our project was deployed using streamlit where you can easily switch models to test its predictive ability. You can run the project by running the following command in the terminal:
     ```bash
-     streamlit run scr/app.py
+     streamlit run app.py
      ```
 ## Evaluation Metrics
 - **Accuracy**: Overall correct predictions
 - **Precision and Recall**: To handle class imbalance
-- **F1 Score**: Balance between precision and recall
-
+- **F1 Score**: Balance between precision and recall.
